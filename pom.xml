@@ -60,7 +60,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.pxene.upload.PacketUploader</mainClass>
+                            <mainClass>com.rainbow.upload.PacketUploader</mainClass>
                         </manifest>
                     </archive>
                     <appendAssemblyId>false</appendAssemblyId>
