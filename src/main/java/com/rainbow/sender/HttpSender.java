@@ -38,11 +38,11 @@ public class HttpSender implements Sender {
 
     @Override
     public String sendGetReq(String url) throws IOException {
-        HttpGet get = new HttpGet(URIUtil.encodeQuery(url));
+        HttpGet get = new HttpGet(URIUtil.encodePathQuery(url));
 
         RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(30000).setConnectionRequestTimeout(30000)
-                .setSocketTimeout(30000).build();
+                .setConnectTimeout(180000).setConnectionRequestTimeout(180000)
+                .setSocketTimeout(180000).build();
 
         get.setConfig(config);
 

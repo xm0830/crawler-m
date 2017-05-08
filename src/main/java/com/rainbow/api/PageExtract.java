@@ -92,7 +92,7 @@ public class PageExtract implements Extract {
             return this;
         }
 
-        public Builder enbalePageUrlOutput(String name) {
+        public Builder enablePageUrlOutput(String name) {
             Prediction.predictNotNullAndEmpty(name);
 
             extract.pageUrlName = name;
