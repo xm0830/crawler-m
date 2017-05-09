@@ -1,27 +1,21 @@
 package com.rainbow.sender;
 
 import com.rainbow.api.PageExtract;
-import com.rainbow.common.Prediction;
-import com.rainbow.common.QueryWordUtil;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.config.ConnectionConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
-import sun.net.URLCanonicalizer;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,9 +23,11 @@ import java.util.Map;
  * Created by xuming on 2017/4/25.
  */
 public class HttpSender implements Sender {
+    public static final Logger logger = LoggerFactory.getLogger(HttpSender.class);
+
     private Map<String, String> headers = new HashMap<>();
     private CloseableHttpClient client = null;
-    private boolean enbaleAjax = false;
+    private boolean enableAjax = false;
 
     private HttpSender() {
     }
@@ -63,7 +59,7 @@ public class HttpSender implements Sender {
             get.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36");
         }
 
-        if (enbaleAjax) {
+        if (enableAjax) {
             get.addHeader("X-Requested-With", "XMLHttpRequest");
         }
 
@@ -83,12 +79,19 @@ public class HttpSender implements Sender {
             byte[] bytes = EntityUtils.toByteArray(resp.getEntity());
             String str = new String(bytes, contentType.getCharset());
 
-            if (!QueryWordUtil.isFrequentlyUsed(str)) {
-                str = new String(bytes, "gbk");
-            }
+            Elements select = Jsoup.parse(str).select("meta[http-equiv=\"Content-Type\"]");
+            if (select.size() > 0) {
+                String content = select.get(select.size() - 1).attr("content");
+                String[] split = content.split(";");
+                if (split.length == 2) {
+                    String[] split1 = split[1].split("=");
+                    if (split1.length == 2) {
+                        String charset = split1[1];
+                        str = new String(bytes, charset);
 
-            if (!QueryWordUtil.isFrequentlyUsed(str)) {
-                str = "";
+                        logger.info("it has a sense for charset type: " + charset);
+                    }
+                }
             }
 
             resp.close();
@@ -126,7 +129,7 @@ public class HttpSender implements Sender {
         }
 
         public Builder enableAjax() {
-            sender.enbaleAjax = true;
+            sender.enableAjax = true;
             return this;
         }
 
