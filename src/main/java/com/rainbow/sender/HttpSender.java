@@ -2,16 +2,26 @@ package com.rainbow.sender;
 
 import com.rainbow.api.PageExtract;
 import com.rainbow.common.Prediction;
+import com.rainbow.common.QueryWordUtil;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.config.ConnectionConfig;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
+import sun.net.URLCanonicalizer;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +32,6 @@ public class HttpSender implements Sender {
     private Map<String, String> headers = new HashMap<>();
     private CloseableHttpClient client = null;
     private boolean enbaleAjax = false;
-    private String charset = "utf-8";
 
     private HttpSender() {
     }
@@ -62,7 +71,26 @@ public class HttpSender implements Sender {
         int status = resp.getStatusLine().getStatusCode();
 
         if (status == HttpStatus.SC_OK) {
-            String str = EntityUtils.toString(resp.getEntity(), charset);
+            ContentType contentType = ContentType.get(resp.getEntity());
+            if (contentType != null) {
+                if (contentType.getCharset() == null) {
+                    contentType = contentType.withCharset("utf-8");
+                }
+            } else {
+                contentType = ContentType.DEFAULT_TEXT.withCharset("utf-8");
+            }
+
+            byte[] bytes = EntityUtils.toByteArray(resp.getEntity());
+            String str = new String(bytes, contentType.getCharset());
+
+            if (!QueryWordUtil.isFrequentlyUsed(str)) {
+                str = new String(bytes, "gbk");
+            }
+
+            if (!QueryWordUtil.isFrequentlyUsed(str)) {
+                str = "";
+            }
+
             resp.close();
             return str;
         }
@@ -94,13 +122,6 @@ public class HttpSender implements Sender {
 
         public Builder addHeader(String key, String value) {
             sender.headers.put(key, value);
-            return this;
-        }
-
-        public Builder setCharset(String charset) {
-            Prediction.predictNotNullAndEmpty(charset);
-
-            sender.charset = charset;
             return this;
         }
 
