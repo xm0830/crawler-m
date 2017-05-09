@@ -83,7 +83,7 @@ public class HttpSender implements Sender {
             for (int i = 0; i < select.size(); i++) {
                 Element element = select.get(i);
                 if (element.attr("http-equiv") != null && element.attr("http-equiv").equals("Content-Type")) {
-                    String content = select.get(select.size() - 1).attr("content");
+                    String content = element.attr("content");
                     String[] split = content.split(";");
                     if (split.length == 2) {
                         String[] split1 = split[1].split("=");
