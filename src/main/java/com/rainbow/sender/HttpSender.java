@@ -79,18 +79,26 @@ public class HttpSender implements Sender {
             byte[] bytes = EntityUtils.toByteArray(resp.getEntity());
             String str = new String(bytes, contentType.getCharset());
 
-            Elements select = Jsoup.parse(str).select("meta[http-equiv=\"Content-Type\"]");
-            if (select.size() > 0) {
-                String content = select.get(select.size() - 1).attr("content");
-                String[] split = content.split(";");
-                if (split.length == 2) {
-                    String[] split1 = split[1].split("=");
-                    if (split1.length == 2) {
-                        String charset = split1[1];
-                        str = new String(bytes, charset);
+            Elements select = Jsoup.parse(str).select("meta");
+            for (int i = 0; i < select.size(); i++) {
+                Element element = select.get(i);
+                if (element.attr("http-equiv") != null && element.attr("http-equiv").equals("Content-Type")) {
+                    String content = select.get(select.size() - 1).attr("content");
+                    String[] split = content.split(";");
+                    if (split.length == 2) {
+                        String[] split1 = split[1].split("=");
+                        if (split1.length == 2) {
+                            String charset = split1[1].trim();
+                            logger.info("it has a sense for charset: " + charset);
 
-                        logger.info("it has a sense for charset type: " + charset);
+                            str = new String(bytes, charset);
+                        }
                     }
+                } else if (element.attr("charset") != null && !element.attr("charset").equals("")) {
+                    String charset = element.attr("charset").trim();
+                    logger.info("it has a sense for charset: " + charset);
+
+                    str = new String(bytes, charset);
                 }
             }
 
