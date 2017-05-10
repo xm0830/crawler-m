@@ -82,7 +82,8 @@ public class HttpSender implements Sender {
             Elements select = Jsoup.parse(str).select("meta");
             for (int i = 0; i < select.size(); i++) {
                 Element element = select.get(i);
-                if (element.attr("http-equiv") != null && element.attr("http-equiv").equals("Content-Type")) {
+                boolean condition = element.attr("http-equiv") != null && element.attr("http-equiv").toLowerCase().equals("content-type");
+                if (condition) {
                     String content = element.attr("content");
                     String[] split = content.split(";");
                     if (split.length == 2) {
