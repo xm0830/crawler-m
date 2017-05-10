@@ -1,6 +1,6 @@
-package com.rainbow.scheduler;
+package com.rainbow.crawler.scheduler;
 
-import com.rainbow.common.Prediction;
+import com.rainbow.crawler.common.Prediction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

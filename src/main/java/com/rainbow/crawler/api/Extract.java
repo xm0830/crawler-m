@@ -1,6 +1,6 @@
-package com.rainbow.api;
+package com.rainbow.crawler.api;
 
-import com.rainbow.fetcher.FetchResult;
+import com.rainbow.crawler.fetcher.FetchResult;
 
 import java.io.Closeable;
 import java.io.IOException;

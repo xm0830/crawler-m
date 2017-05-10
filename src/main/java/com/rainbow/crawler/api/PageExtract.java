@@ -1,8 +1,8 @@
-package com.rainbow.api;
+package com.rainbow.crawler.api;
 
-import com.rainbow.common.Prediction;
-import com.rainbow.fetcher.*;
-import com.rainbow.sender.HttpSender;
+import com.rainbow.crawler.common.Prediction;
+import com.rainbow.crawler.fetcher.*;
+import com.rainbow.crawler.sender.HttpSender;
 
 import java.io.IOException;
 import java.util.HashMap;

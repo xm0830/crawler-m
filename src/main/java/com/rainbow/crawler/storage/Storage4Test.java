@@ -1,6 +1,6 @@
-package com.rainbow.storage;
+package com.rainbow.crawler.storage;
 
-import com.rainbow.fetcher.FetchResult;
+import com.rainbow.crawler.fetcher.FetchResult;
 
 import java.io.IOException;
 

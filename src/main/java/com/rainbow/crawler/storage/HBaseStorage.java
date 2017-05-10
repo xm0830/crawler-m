@@ -1,7 +1,7 @@
-package com.rainbow.storage;
+package com.rainbow.crawler.storage;
 
-import com.rainbow.common.MD5Utils;
-import com.rainbow.fetcher.FetchResult;
+import com.rainbow.crawler.common.MD5Utils;
+import com.rainbow.crawler.fetcher.FetchResult;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;

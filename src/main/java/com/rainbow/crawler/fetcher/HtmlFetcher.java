@@ -1,6 +1,6 @@
-package com.rainbow.fetcher;
+package com.rainbow.crawler.fetcher;
 
-import com.rainbow.common.Prediction;
+import com.rainbow.crawler.common.Prediction;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

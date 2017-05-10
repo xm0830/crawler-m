@@ -1,4 +1,4 @@
-package com.rainbow.common;
+package com.rainbow.crawler.common;
 
 import java.util.ArrayList;
 import java.util.Collection;

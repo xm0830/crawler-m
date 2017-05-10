@@ -1,11 +1,11 @@
-package com.rainbow.api;
+package com.rainbow.crawler.api;
 
-import com.rainbow.common.Prediction;
-import com.rainbow.common.ResourceCloser;
-import com.rainbow.fetcher.FetchResult;
-import com.rainbow.scheduler.ScheduleRule;
-import com.rainbow.scheduler.Scheduler;
-import com.rainbow.storage.Storage;
+import com.rainbow.crawler.common.Prediction;
+import com.rainbow.crawler.common.ResourceCloser;
+import com.rainbow.crawler.fetcher.FetchResult;
+import com.rainbow.crawler.scheduler.ScheduleRule;
+import com.rainbow.crawler.scheduler.Scheduler;
+import com.rainbow.crawler.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
-package com.rainbow.fetcher;
+package com.rainbow.crawler.fetcher;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rainbow.common.Prediction;
+import com.rainbow.crawler.common.Prediction;
 
 import java.util.ArrayList;
 import java.util.HashMap;

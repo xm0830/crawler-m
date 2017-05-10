@@ -1,4 +1,4 @@
-package com.rainbow.sender;
+package com.rainbow.crawler.sender;
 
 import java.io.IOException;
 

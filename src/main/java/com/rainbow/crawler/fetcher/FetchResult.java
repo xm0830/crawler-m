@@ -1,4 +1,4 @@
-package com.rainbow.fetcher;
+package com.rainbow.crawler.fetcher;
 
 import java.util.ArrayList;
 import java.util.HashMap;

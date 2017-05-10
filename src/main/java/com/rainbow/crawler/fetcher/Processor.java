@@ -1,4 +1,4 @@
-package com.rainbow.fetcher;
+package com.rainbow.crawler.fetcher;
 
 /**
  * Created by xuming on 2017/4/27.

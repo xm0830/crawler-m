@@ -1,4 +1,4 @@
-package com.rainbow.common;
+package com.rainbow.crawler.common;
 
 import java.io.Closeable;
 import java.io.IOException;

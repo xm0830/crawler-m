@@ -1,4 +1,4 @@
-package com.rainbow.common;
+package com.rainbow.crawler.common;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

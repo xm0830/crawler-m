@@ -1,6 +1,6 @@
-package com.rainbow.sender;
+package com.rainbow.crawler.sender;
 
-import com.rainbow.api.PageExtract;
+import com.rainbow.crawler.api.PageExtract;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;

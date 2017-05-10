@@ -1,6 +1,6 @@
-package com.rainbow.fetcher;
+package com.rainbow.crawler.fetcher;
 
-import com.rainbow.api.PageExtract;
+import com.rainbow.crawler.api.PageExtract;
 
 /**
  * Created by xuming on 2017/4/26.
