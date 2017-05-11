@@ -83,7 +83,7 @@ public class PipeLine {
                             throw new RuntimeException(e);
                         }
                     } else {
-                        return goWithStorage(result.select("url"), url, extracts, index + 1, storage);
+                        count += goWithStorage(result.select("url"), url, extracts, index + 1, storage);
                     }
                 }
             } catch (Exception e) {
