@@ -107,9 +107,9 @@ public class PipeLine {
                     logger.info("fetch result: " + System.lineSeparator() + result.toString());
 
                     if (index == extracts.length - 1) {
-                        rs.addFetchResult(result);
+                        rs.append(result);
                     } else {
-                        rs.addFetchResult(goWithNoStorage(result.select("url"), url, extracts, index + 1));
+                        rs.append(goWithNoStorage(result.select("url"), url, extracts, index + 1));
                     }
                 }
             } catch (Exception e) {

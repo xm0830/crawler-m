@@ -13,7 +13,8 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.IOUtils;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by xuming on 2017/4/21.
@@ -23,10 +24,15 @@ public class HBaseStorage implements Storage {
     private String tableName = null;
     private Connection connection = null;
     private Table table = null;
+    private boolean isRandomRowKey = false;
 
     public HBaseStorage(String tableName) throws IOException {
-        this.tableName = tableName;
+        this(tableName, false);
+    }
 
+    public HBaseStorage(String tableName, boolean isRandomRowkey) throws IOException {
+        this.tableName = tableName;
+        this.isRandomRowKey = isRandomRowkey;
         init();
     }
 
@@ -36,19 +42,24 @@ public class HBaseStorage implements Storage {
             init();
         }
 
-        int columnNum = 0;
-        for (Map<String, String> row : result.getData()) {
-            if (columnNum == 0) {
-                columnNum = row.size();
+        List<String> columnNames = result.getColumnNames();
+
+        for (int i = 0; i < result.size(); i++) {
+            List<String> row = result.getRow(i);
+
+            if (row.size() != columnNames.size()) {
+                throw new RuntimeException("error format data: all row not has same column num!");
             }
 
-            if (row.size() != columnNum) {
-                throw new RuntimeException("error format data: all row not has save column num!");
+            Put put = null;
+            if (isRandomRowKey) {
+                put = new Put(Bytes.toBytes(UUID.randomUUID().toString()));
+            } else {
+                put = new Put(Bytes.toBytes(MD5Utils.encrypt(result.getColumnValue(i, "url"), MD5Utils.MD5_KEY)));
             }
 
-            Put put = new Put(Bytes.toBytes(MD5Utils.encrypt(row.get("url"), MD5Utils.MD5_KEY)));
-            for (Map.Entry<String, String> entry : row.entrySet()) {
-                put.addColumn(Bytes.toBytes("info"), Bytes.toBytes(entry.getKey()), Bytes.toBytes(entry.getValue()));
+            for (int j = 0; j < columnNames.size(); j++) {
+                put.addColumn(Bytes.toBytes("info"), Bytes.toBytes(columnNames.get(j)), Bytes.toBytes(result.getColumnValue(i,columnNames.get(j))));
             }
 
             table.put(put);

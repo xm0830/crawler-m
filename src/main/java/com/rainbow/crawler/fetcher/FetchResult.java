@@ -1,79 +1,136 @@
 package com.rainbow.crawler.fetcher;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by xuming on 2017/4/25.
  */
 public class FetchResult {
-    private List<Map<String, String>> list = new ArrayList<>();
+    private List<String> schema = new ArrayList<>();
+    private List<ArrayList<String>> data = new ArrayList<>();
 
     public void insertColumn(int rowIndex, String name, String value) {
-        if (list.size() - 1 >= rowIndex) {
-            list.get(rowIndex).put(name, value);
-        } else {
-            Map<String, String> row = new HashMap<>();
-            row.put(name, value);
+        if (data.size() - 1 >= rowIndex) {
+            int index = schema.indexOf(name);
+            if (index != -1) {
+                data.get(rowIndex).set(index, value);
+            } else {
+                schema.add(name);
+                for (int i = 0; i < data.size(); i++) {
+                    data.get(i).add(null);
+                }
 
-            list.add(row);
+                int columnIndex = schema.indexOf(name);
+                data.get(rowIndex).set(columnIndex, value);
+            }
+        } else if (data.size() == rowIndex) {
+            ArrayList<String> row = new ArrayList<>();
+            for (int i = 0; i < schema.size(); i++) {
+                row.add(null);
+            }
+
+            int index = schema.indexOf(name);
+            if (index != -1) {
+                row.set(index, value);
+            } else {
+                schema.add(name);
+                for (ArrayList<String> data : data) {
+                    data.add(null);
+                }
+
+                row.add(value);
+            }
+
+            data.add(row);
+        } else {
+            throw new RuntimeException("cannot insert, because current max row num is: " + data.size());
         }
     }
 
     public void addColumn(String name, String value) {
-        if (!list.isEmpty()) {
-            for (Map<String, String> row : list) {
-                row.put(name, value);
+        if (!data.isEmpty()) {
+            int index = schema.indexOf(name);
+            if (index == -1) {
+                schema.add(name);
+                for (ArrayList<String> row : data) {
+                    row.add(value);
+                }
+            } else {
+                throw new RuntimeException("column: " + name + " already exists!");
             }
         }
     }
 
-    public void addFetchResult(FetchResult result) {
-        int rowIndex = list.size();
-        for (Map<String, String> map : result.list) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                insertColumn(rowIndex, entry.getKey(), entry.getValue());
-            }
+    public List<String> getColumnNames() {
+        return schema;
+    }
 
-            rowIndex++;
+    public List<String> getRow(int index) {
+        return data.get(index);
+    }
+
+    public String getColumnValue(int index, String name) {
+        int i = schema.indexOf(name);
+        if (i != -1) {
+            return getRow(index).get(i);
+        }
+
+        return null;
+    }
+
+    public void append(FetchResult result) {
+        if (schema.size() == result.schema.size()) {
+            int rowIndex = data.size();
+            for (ArrayList<String> row : result.data) {
+                for (int i = 0; i < result.schema.size(); i++) {
+                    insertColumn(rowIndex, result.schema.get(i), row.get(i));
+                }
+
+                rowIndex++;
+            }
+        } else {
+            throw new RuntimeException("cannot append another FetchResult, because has different column num!");
         }
     }
 
     public List<String> select(String name) {
         List<String> result = new ArrayList<>();
-        for (Map<String, String> map : list) {
-            result.add(map.get(name));
+        int index = schema.indexOf(name);
+
+        if (index != -1) {
+            for (ArrayList<String> row : data) {
+                result.add(row.get(index));
+            }
         }
 
         return result;
     }
 
-    public List<Map<String, String>> getData() {
-        return list;
-    }
 
     public int size() {
-        return list.size();
+        return data.size();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            Map<String, String> map = list.get(i);
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                String value = entry.getValue();
+        for (int i = 0; i < data.size(); i++) {
+            ArrayList<String> row = data.get(i);
+            int index = 0;
+            for (String column : row) {
+                String value = column;
                 if (value.length() > 50) value = value.substring(0, 50) + "...";
-                sb.append("\t").append(entry.getKey()).append("=>").append(value).append(",");
+                sb.append("\t").append(schema.get(index)).append("=>").append(value).append(",");
+
+                index++;
             }
 
-            if (map.size() > 0) {
+            if (row.size() > 0) {
                 sb.deleteCharAt(sb.length() - 1);
             }
 
-            if (i < list.size() - 1) {
+            if (i < data.size() - 1) {
                 sb.append(System.lineSeparator());
             }
         }
@@ -84,10 +141,10 @@ public class FetchResult {
     static FetchResult merge(FetchResult singleValueResult, FetchResult multiValueResult) {
         if (multiValueResult.size() > 0) {
             if (singleValueResult.size() > 0) {
-                for (Map.Entry<String, String> entry : singleValueResult.getData().get(0).entrySet()) {
-                    for (int i = 0; i < multiValueResult.size(); i++) {
-                        Map<String, String> map = multiValueResult.getData().get(i);
-                        map.put(entry.getKey(), entry.getValue());
+                for (int i = 0; i < singleValueResult.size(); i++) {
+                    List<String> row = singleValueResult.getRow(i);
+                    for (int j = 0; j < row.size(); j++) {
+                        multiValueResult.addColumn(singleValueResult.schema.get(j), row.get(j));
                     }
                 }
             }
