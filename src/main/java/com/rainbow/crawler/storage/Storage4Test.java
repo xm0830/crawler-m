@@ -14,6 +14,11 @@ public class Storage4Test implements Storage {
     }
 
     @Override
+    public void recover() throws IOException {
+
+    }
+
+    @Override
     public void close() throws IOException {
 
     }

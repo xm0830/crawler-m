@@ -10,4 +10,5 @@ import java.io.IOException;
  */
 public interface Storage extends Closeable {
     void save(FetchResult result) throws IOException;
+    void recover() throws IOException;
 }

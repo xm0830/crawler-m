@@ -120,11 +120,11 @@ public class PipeLine {
         return rs;
     }
 
-    private void block(Closeable resources1, Closeable... resources2) {
+    private void block(Storage storage, Closeable... resources2) {
         if (scheduler != null) {
             boolean hasLogged = false;
             while (!scheduler.schedule(rules)) {
-                ResourceCloser.close(resources1);
+                ResourceCloser.close(storage);
                 ResourceCloser.close(resources2);
 
                 try {
@@ -138,7 +138,15 @@ public class PipeLine {
                     e.printStackTrace();
                 }
             }
+
+            if (hasLogged) {
+                try {
+                    storage.recover();
+                } catch (IOException e) {
+                    logger.error("recover storage failed!", e);
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
-
 }
