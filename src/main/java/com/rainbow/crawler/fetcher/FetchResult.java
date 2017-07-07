@@ -80,7 +80,7 @@ public class FetchResult {
     }
 
     public void append(FetchResult result) {
-        if (schema.size() == result.schema.size()) {
+        if (schema.isEmpty() || schema.size() == result.schema.size()) {
             int rowIndex = data.size();
             for (ArrayList<String> row : result.data) {
                 for (int i = 0; i < result.schema.size(); i++) {
