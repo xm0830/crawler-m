@@ -5,6 +5,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,8 @@ import java.util.Map;
  * Created by xuming on 2017/4/25.
  */
 public class HtmlFetcher implements Fetcher {
+
+    private static final Logger logger = LoggerFactory.getLogger(HtmlFetcher.class);
 
     private Map<String, String> singleValueSelector = new HashMap<>();
     private Map<String, String> singleValueAttr = new HashMap<>();
@@ -71,6 +75,7 @@ public class HtmlFetcher implements Fetcher {
             }
 
             if (select.size() == 0) {
+                logger.warn("fetched html content: {}", html);
                 throw new RuntimeException("multi-value columns has no value for key: " + entry.getKey());
             }
 
